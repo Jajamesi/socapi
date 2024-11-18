@@ -7,6 +7,40 @@ import utils
 
 
 class Downloader:
+    """
+    A class to handle downloading poll data from a socpanel API.
+
+    Expects the main class to define:
+    - self._headers: headers for requests.
+    - self._login(): method to login in panel.
+    - self._request(): method to send generic requests.
+
+    Attributes:
+    -----------
+    headers : dict
+        Headers for the API requests.
+
+    Methods:
+    --------
+    _export_poll_data(poll_id, export_format, is_completes, is_in_progress, export_interval)
+        Exports poll data based on the provided parameters.
+
+    _check_export_progress()
+        Checks the progress of the export process.
+
+    _download_poll(uuid, export_path)
+        Downloads the exported poll data and saves it to the specified path.
+
+    _done_export(uuid)
+        Marks the export process as done.
+
+    download_poll(poll_id, export_path, is_completes, is_in_progress, time_from, time_to)
+        Downloads a single poll's data based on the provided parameters.
+
+    download_polls(poll_ids, export_dir, export_format, filenames, is_completes, is_in_progress, time_from, time_to)
+        Downloads multiple poll's data based on the provided parameters.
+    """
+
     async def _export_poll_data(
             self,
             poll_id: int,
