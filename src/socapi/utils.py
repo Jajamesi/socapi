@@ -1,3 +1,5 @@
+import asyncio
+from datetime import datetime, timezone, timedelta
 
 import constants as const
 
@@ -30,3 +32,55 @@ def validate_file_names_ids(poll_ids, filenames, export_format):
     filenames = dict(zip(poll_ids, filenames))
 
     return filenames
+
+
+def retry_decor(exception_message: str, attempts=const.RETRIES_NUM, sleep=1):
+    async def decorator(func):
+        async def wrapper(*args, **kwargs):
+            for attempt in range(attempts):
+                print(f"Attempting {func.__name__} {attempt}")
+                try:
+                    result = await func(*args, **kwargs)
+                    return result
+                except Exception as e:
+                    if attempt == attempts - 1:
+                        raise Exception(f"{exception_message}: '{func.__name__}' retries amount exceeded:", e)
+                    await asyncio.sleep(sleep)
+        return wrapper
+    return decorator
+
+
+def convert_to_iso8601(date_str):
+    """
+    Convert a date string in various formats to ISO 8601 format.
+
+    :param date_str: Input string in "dd:mm:yyyy hh:mm:ss", "dd:mm:yyyy", or "dd:mm" format
+    :return: ISO 8601 formatted string
+    """
+
+    if date_str is None:
+        return None
+
+    # Set the timezone offset (+3:00)
+    tz = timezone(timedelta(hours=3))
+    current_year = datetime.now().year
+
+    # Parse the input date string based on its export_format
+    if len(date_str) == 16:  # "dd:mm:yyyy hh:mm:ss"
+        dt = datetime.strptime(date_str, "%d:%m:%Y %H:%M:%S")
+    if len(date_str) == 14:  # "dd:mm:yyyy hh:mm"
+        dt = datetime.strptime(date_str, "%d:%m:%Y %H:%M")
+    elif len(date_str) == 10:  # "dd:mm:yyyy"
+        dt = datetime.strptime(date_str, "%d:%m:%Y")
+        dt = dt.replace(hour=0, minute=0, second=0)
+    elif len(date_str) == 5:  # "dd:mm"
+        dt = datetime.strptime(date_str, "%d:%m")
+        dt = dt.replace(year=current_year, hour=0, minute=0, second=0)
+    else:
+        raise ValueError("Invalid date format. Expected formats: 'dd:mm:yyyy hh:mm:ss', 'dd:mm:yyyy', or 'dd:mm'.")
+
+    # Add the timezone info
+    dt = dt.replace(tzinfo=tz)
+
+    # Convert to ISO 8601 format
+    return dt.isoformat()

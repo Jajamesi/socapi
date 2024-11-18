@@ -1,147 +1,12 @@
 
 import asyncio
-import aiohttp
-
-from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 import constants as const
 import utils
 
 
-def retry_decor(exception_message: str, attempts=const.RETRIES_NUM, sleep=1):
-    async def decorator(func):
-        async def wrapper(*args, **kwargs):
-            for attempt in range(attempts):
-                print(f"Attempting {func.__name__} {attempt}")
-                try:
-                    result = await func(*args, **kwargs)
-                    return result
-                except Exception as e:
-                    if attempt == attempts - 1:
-                        raise Exception(f"{exception_message}: '{func.__name__}' retries amount exceeded:", e)
-                    await asyncio.sleep(sleep)
-        return wrapper
-    return decorator
-
-
-def convert_to_iso8601(date_str):
-    """
-    Convert a date string in various formats to ISO 8601 format.
-
-    :param date_str: Input string in "dd:mm:yyyy hh:mm:ss", "dd:mm:yyyy", or "dd:mm" format
-    :return: ISO 8601 formatted string
-    """
-
-    if date_str is None:
-        return None
-
-    # Set the timezone offset (+3:00)
-    tz = timezone(timedelta(hours=3))
-    current_year = datetime.now().year
-
-    # Parse the input date string based on its export_format
-    if len(date_str) == 16:  # "dd:mm:yyyy hh:mm:ss"
-        dt = datetime.strptime(date_str, "%d:%m:%Y %H:%M:%S")
-    if len(date_str) == 14:  # "dd:mm:yyyy hh:mm"
-        dt = datetime.strptime(date_str, "%d:%m:%Y %H:%M")
-    elif len(date_str) == 10:  # "dd:mm:yyyy"
-        dt = datetime.strptime(date_str, "%d:%m:%Y")
-        dt = dt.replace(hour=0, minute=0, second=0)
-    elif len(date_str) == 5:  # "dd:mm"
-        dt = datetime.strptime(date_str, "%d:%m")
-        dt = dt.replace(year=current_year, hour=0, minute=0, second=0)
-    else:
-        raise ValueError("Invalid date format. Expected formats: 'dd:mm:yyyy hh:mm:ss', 'dd:mm:yyyy', or 'dd:mm'.")
-
-    # Add the timezone info
-    dt = dt.replace(tzinfo=tz)
-
-    # Convert to ISO 8601 format
-    return dt.isoformat()
-
-
-class SocAPIClient:
-    def __init__(self, base_url, username, password):
-        self.base_url = str(base_url)
-
-        self.username = str(username)
-        self.password = str(password)
-
-        self._session = None
-        self.token = str()
-        self.headers = dict()
-        self.progress_status = list()
-        self.semaphore = asyncio.Semaphore(const.MAX_CONCURRENT_REQUESTS)
-
-
-    async def _ensure_session(self):
-        if self._session is None or self._session.closed:
-            self._session = aiohttp.ClientSession()
-
-
-    async def _request(
-            self,
-            endpoint,
-            method="post",
-            headers=None,
-            payload=None,
-            ssl=False,
-            request_name="Request",
-            attempts=const.RETRIES_NUM,
-            sleep=1
-    ):
-
-        await self._ensure_session()
-
-        # Validate the method and resolve aiohttp method
-        if method.lower() not in const.VALID_REQUEST_METHODS:
-            raise ValueError(f"Invalid method: {method}. Use one of {const.VALID_REQUEST_METHODS}.")
-        aiohttp_method = getattr(self._session, method.lower())
-
-        request_url = f"{self.base_url}/{endpoint}"
-
-        for attempt in range(attempts):
-            # print(f"Attempting {attempt}")
-            try:
-                async with self.semaphore:
-                    response = await aiohttp_method(request_url, headers=headers, json=payload, ssl=ssl)
-                return response
-
-            except Exception as e:
-                error = e
-                await asyncio.sleep(sleep)
-            finally:
-                if attempt == attempts - 1:
-                    raise Exception(f"{request_name} failed - retries amount exceeded:", error)
-
-
-    async def _login(self):
-
-        login_payload = {
-            "login": self.username,
-            "password": self.password
-        }
-
-        result = await self._request(endpoint=const.LOGIN_URL, request_name="Login", payload=login_payload)
-        # print(result)
-        result_json = await result.json()
-
-        request_result = result_json.get("result")
-
-        if request_result is None:
-            raise ValueError(f"Login failed: {result_json.get("error", "unknown error")}")
-
-        token = request_result.get("session_token")
-        if token is None:
-            raise ValueError("Login failed: No session token received")
-
-        self.token = token
-        self.headers = {
-            "Authorization": self.token
-        }
-
-
+class Downloader:
     async def _export_poll_data(
             self,
             poll_id: int,
@@ -244,7 +109,7 @@ class SocAPIClient:
             time_to=None
     ):
 
-        export_interval = (convert_to_iso8601(time_from), convert_to_iso8601(time_to))
+        export_interval = (utils.convert_to_iso8601(time_from), utils.convert_to_iso8601(time_to))
 
         if export_path is None:
             export_format = const.EXPORT_FORMATS.get("sav", 2)
@@ -301,7 +166,7 @@ class SocAPIClient:
             time_to=None
     ):
         # Validations
-        export_interval = (convert_to_iso8601(time_from), convert_to_iso8601(time_to))
+        export_interval = (utils.convert_to_iso8601(time_from), utils.convert_to_iso8601(time_to))
 
         export_dir = Path() if export_dir is None else Path(export_dir)
 
