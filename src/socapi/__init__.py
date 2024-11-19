@@ -1,12 +1,13 @@
 import asyncio
 import aiohttp
 
-import constants as const
-import utils
+from . import constants as const
+from . import utils
 
-from _downloader import Downloader
+from ._downloader import Downloader
+from ._quota import Quota
 
-class SocAPIClient(Downloader):
+class SocAPIClient(Downloader, Quota):
     def __init__(self, base_url, username, password):
         self.base_url = str(base_url)
 
@@ -45,7 +46,6 @@ class SocAPIClient(Downloader):
         request_url = f"{self.base_url}/{endpoint}"
 
         for attempt in range(attempts):
-            # print(f"Attempting {attempt}")
             try:
                 async with self.semaphore:
                     response = await aiohttp_method(request_url, headers=headers, json=payload, ssl=ssl)
@@ -66,7 +66,7 @@ class SocAPIClient(Downloader):
         }
 
         result = await self._request(endpoint=const.LOGIN_URL, request_name="Login", payload=login_payload)
-        # print(result)
+
         result_json = await result.json()
 
         request_result = result_json.get("result")

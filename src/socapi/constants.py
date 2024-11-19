@@ -6,6 +6,9 @@ PROGRESS_URL = f"{EXPORT_URL}/progress"
 DOWNLOAD_URL = f"{PROGRESS_URL}/download"
 DONE_URL = f"{PROGRESS_URL}/done"
 
+QUOTA_LIST_URL = "api/counter/list"
+POLL_GET_URL = "api/poll/get"
+
 RETRIES_NUM = 3
 VALID_REQUEST_METHODS = ("post", "get")
 SUCCESS_STATUS = 200

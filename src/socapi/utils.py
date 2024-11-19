@@ -1,7 +1,7 @@
 import asyncio
 from datetime import datetime, timezone, timedelta
 
-import constants as const
+from . import constants as const
 
 def validate_file_format(export_format_input):
     if isinstance(export_format_input, str):
@@ -26,7 +26,7 @@ def validate_file_names_ids(poll_ids, filenames, export_format):
     if filenames is None:
         filenames = [f"poll_{poll_id}.{export_format}" for poll_id in poll_ids]
 
-    if (len(poll_ids) != len(filenames)):
+    if len(poll_ids) != len(filenames):
         raise ValueError("Filenames list must be the same length as poll_ids")
 
     filenames = dict(zip(poll_ids, filenames))

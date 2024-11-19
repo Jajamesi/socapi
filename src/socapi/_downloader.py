@@ -2,8 +2,8 @@
 import asyncio
 from pathlib import Path
 
-import constants as const
-import utils
+from . import constants as const
+from . import utils
 
 
 class Downloader:
@@ -49,7 +49,6 @@ class Downloader:
             is_in_progress=True,
             export_interval=None
     ):
-        print(f"started _export_poll_data {poll_id}")
         export_payload = {
             "poll_id": poll_id,
             "format_id": export_format,
@@ -78,7 +77,6 @@ class Downloader:
 
 
     async def _check_export_progress(self):
-        print(f"started _check_export_progress")
 
         result = await self._request(endpoint=const.PROGRESS_URL, request_name="Progress", headers=self.headers)
 
@@ -98,7 +96,6 @@ class Downloader:
             uuid: str,
             export_path: Path
     ):
-        print(f"started _download_poll {uuid}, {export_path}")
 
         # Download and write data
         download_payload = {"uuid": uuid}
@@ -116,13 +113,10 @@ class Downloader:
             with open(export_path, 'wb') as f:
                 f.write(content)
 
-            print("ended downlaod")
-
             await self._done_export(uuid=uuid)
 
 
     async def _done_export(self, uuid: str):
-        print(f"started _done_export {uuid}")
         done_payload = {"uuid": uuid}
 
         await self._request(
@@ -133,7 +127,7 @@ class Downloader:
         )
 
 
-    async def download_poll(
+    async def _download_poll(
             self,
             poll_id,
             export_path = None,
@@ -188,11 +182,15 @@ class Downloader:
         )
 
 
-    async def download_polls(
+    def download_poll(self, poll_id: int, *args, **kwargs):
+        asyncio.run(self._download_poll(poll_id, *args, **kwargs))
+
+
+    async def _download_polls(
             self,
             poll_ids: list[int],
             export_dir=None,
-            export_format = const.EXPORT_FORMATS.get("sav", 2),
+            export_format = "sav",
             filenames=None,
             is_completes=True,
             is_in_progress=True,
@@ -235,7 +233,6 @@ class Downloader:
                     if (inst_id in chunk) and (inst_status == "done") and (inst_id not in started):
                         started.add(inst_id)
                         inst_uuid = inst.get("uuid")
-                        print("inst_status", inst_uuid)
                         download_task = asyncio.create_task(self._download_poll(
                             uuid=inst_uuid,
                             export_path=export_dir / filenames[inst_id]
@@ -246,3 +243,7 @@ class Downloader:
 
         # Ensure all tasks complete
         await asyncio.gather(*download_tasks)
+
+
+    def download_polls(self, poll_ids: list[int], *args, **kwargs):
+        asyncio.run(self._download_polls(poll_ids, *args, **kwargs))
