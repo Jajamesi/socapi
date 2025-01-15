@@ -6,8 +6,9 @@ from . import utils
 
 from ._downloader import Downloader
 from ._quota import Quota
+from ._searcher import Searcher
 
-class SocAPIClient(Downloader, Quota):
+class SocAPIClient(Downloader, Quota, Searcher):
     def __init__(self, base_url, username, password):
         self.base_url = str(base_url)
 
@@ -82,3 +83,31 @@ class SocAPIClient(Downloader, Quota):
         self.headers = {
             "Authorization": self.token
         }
+
+
+    async def _any_completes(self, poll_id:int) -> bool:
+
+        payload = {
+            "is_poll_complete": True,
+            "is_poll_in_progress": True,
+            "domain_ids": [1],
+            "id": poll_id
+        }
+
+        result = await self._request(
+            endpoint=const.STAT_URL,
+            payload=payload,
+            request_name="stat any exist",
+            headers=self.headers
+        )
+
+        result_json = await result.json()
+
+        if result_json.get("error")!= "":
+            raise ValueError(f"Error in getting poll statistic: {result_json.get('error')}")
+
+        return result_json["result"]["ended_count"] > 0
+
+
+    def has_completes(self, poll_id: int) -> bool:
+        return asyncio.run(self._any_completes(poll_id))

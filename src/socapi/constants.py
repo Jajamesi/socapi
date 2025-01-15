@@ -9,6 +9,11 @@ DONE_URL = f"{PROGRESS_URL}/done"
 QUOTA_LIST_URL = "api/counter/list"
 POLL_GET_URL = "api/poll/get"
 
+SEARCH_LIST_URL = "api/poll/list"
+SEARCH_RETURNS = ['name', 'created_at']
+
+STAT_URL = "api/poll/stat"
+
 RETRIES_NUM = 3
 VALID_REQUEST_METHODS = ("post", "get")
 SUCCESS_STATUS = 200

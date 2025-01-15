@@ -84,3 +84,13 @@ def convert_to_iso8601(date_str):
 
     # Convert to ISO 8601 format
     return dt.isoformat()
+
+
+class EmptyPollError(Exception):
+    """Custom exception for poll not having any completes."""
+    pass
+
+
+class EmptyPollWarning(Warning):
+    """Custom warning for poll not having any completes."""
+    pass
