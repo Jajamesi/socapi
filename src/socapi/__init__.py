@@ -25,6 +25,13 @@ class SocAPIClient(Downloader, Quota, Searcher):
         if self._session is None or self._session.closed:
             self._session = aiohttp.ClientSession()
 
+    async def _close(self):
+        if self._session is not None:
+            await self._session.close()
+
+    def close(self):
+        asyncio.run(self._close())
+
     async def _request(
             self,
             endpoint,
