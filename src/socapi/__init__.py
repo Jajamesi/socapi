@@ -7,8 +7,9 @@ from . import utils
 from ._downloader import Downloader
 from ._quota import Quota
 from ._searcher import Searcher
+from ._profiler import Profile
 
-class SocAPIClient(Downloader, Quota, Searcher):
+class SocAPIClient(Downloader, Quota, Searcher, Profile):
     def __init__(self, base_url, username, password):
         self.base_url = str(base_url)
 
