@@ -102,6 +102,6 @@ class Searcher:
 
 
     def search_by_number(self, name: str, *args, **kwargs):
-        return asyncio.run(self._search_by_name(name, *args, **kwargs))
+        return asyncio.run(self._search_by_number(name, *args, **kwargs))
 
 
