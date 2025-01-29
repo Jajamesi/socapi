@@ -1,8 +1,5 @@
 
 import asyncio
-
-from win32com.client import constants
-
 from . import constants as const
 
 
@@ -41,7 +38,7 @@ class Searcher:
             if result_json.get("error") != "":
                 raise ValueError(f"Error in search by name: {result_json.get("error")}")
 
-            chunk = {poll["id"]: {par: poll[par] for par in constants.SEARCH_RETURNS} for poll in result_json["result"]}
+            chunk = {poll["id"]: {par: poll[par] for par in const.SEARCH_RETURNS} for poll in result_json["result"]}
             return_dict.update(chunk)
 
             if len(chunk) < chunk_size:
@@ -90,7 +87,7 @@ class Searcher:
             if result_json.get("error") != "":
                 raise ValueError(f"Error in search by number: {result_json.get("error")}")
 
-            chunk = {poll["id"]: {par: poll[par] for par in constants.SEARCH_RETURNS} for poll in result_json["result"]}
+            chunk = {poll["id"]: {par: poll[par] for par in const.SEARCH_RETURNS} for poll in result_json["result"]}
             return_dict.update(chunk)
 
             if len(chunk) < chunk_size:
