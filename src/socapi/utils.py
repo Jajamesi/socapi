@@ -20,6 +20,23 @@ def split_into_chunks(iterbl, chunk_size):
 
 
 def validate_file_names_ids(poll_ids, filenames, export_format):
+    """
+    Validate and prepare filenames for export based on poll IDs and export format.
+
+    This function checks if all poll IDs are integers, generates default filenames if none are provided,
+    and ensures that the filenames list matches the poll IDs length.
+
+    Parameters:
+    poll_ids (List[int]): A list of poll IDs.
+    filenames (List[str], optional): A list of filenames corresponding to the poll IDs. Defaults to None.
+    export_format (str): The export format for the files.
+
+    Returns:
+    Dict[int, str]: A dictionary where keys are poll IDs and values are corresponding filenames.
+
+    Raises:
+    ValueError: If any poll ID is not an integer, or if the filenames list length does not match poll IDs length.
+    """
     if not all([isinstance(x, int) for x in poll_ids]):
         raise ValueError("All poll_ids must be integers")
 

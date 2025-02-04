@@ -1,18 +1,19 @@
 
 PANEL_URL =  "https://admin.online-sociology.ru/api/"
-LOGIN_URL = "api/login"
-EXPORT_URL = "api/poll/stat/export"
-PROGRESS_URL = f"{EXPORT_URL}/progress"
-DOWNLOAD_URL = f"{PROGRESS_URL}/download"
-DONE_URL = f"{PROGRESS_URL}/done"
 
-QUOTA_LIST_URL = "api/counter/list"
-POLL_GET_URL = "api/poll/get"
+# ENDPOINTS
+LOGIN_ENDPOINT = "api/login"
+EXPORT_START_ENDPOINT = "api/poll/stat/export"
+EXPORT_PROGRESS_ENDPOINT = f"{EXPORT_START_ENDPOINT}/progress"
+DOWNLOAD_START_ENDPOINT = f"{EXPORT_PROGRESS_ENDPOINT}/download"
+DOWNLOAD_DONE_ENDPOINT = f"{EXPORT_PROGRESS_ENDPOINT}/done"
+QUOTA_LIST_ENDPOINT = "api/counter/list"
+POLL_GET_ENDPOINT = "api/poll/get"
+SEARCH_LIST_ENDPOINT = "api/poll/list"
+STATISTIC_ENDPOINT = "api/poll/stat"
+CONVERSION_ENDPOINT = f"api/poll/stat/conversion"
 
-SEARCH_LIST_URL = "api/poll/list"
 SEARCH_RETURNS = ['name', 'created_at']
-
-STAT_URL = "api/poll/stat"
 
 RETRIES_NUM = 3
 VALID_REQUEST_METHODS = ("post", "get")

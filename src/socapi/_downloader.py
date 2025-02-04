@@ -75,7 +75,7 @@ class Downloader:
                 export_payload["filter"][d] = export_interval[i]
 
         await self._request(
-            endpoint=const.EXPORT_URL,
+            endpoint=const.EXPORT_START_ENDPOINT,
             payload=export_payload,
             headers=self.headers,
             request_name="Export"
@@ -84,7 +84,7 @@ class Downloader:
 
     async def _check_export_progress(self):
 
-        result = await self._request(endpoint=const.PROGRESS_URL, request_name="Progress", headers=self.headers)
+        result = await self._request(endpoint=const.EXPORT_PROGRESS_ENDPOINT, request_name="Progress", headers=self.headers)
 
         try:
             result_json = await result.json()
@@ -107,7 +107,7 @@ class Downloader:
         download_payload = {"uuid": uuid}
 
         result = await self._request(
-            endpoint=const.DOWNLOAD_URL,
+            endpoint=const.DOWNLOAD_START_ENDPOINT,
             request_name="Download",
             headers=self.headers,
             payload=download_payload,
@@ -126,14 +126,14 @@ class Downloader:
         done_payload = {"uuid": uuid}
 
         await self._request(
-            endpoint=const.DONE_URL,
+            endpoint=const.DOWNLOAD_DONE_ENDPOINT,
             request_name="Done",
             headers=self.headers,
             payload=done_payload,
         )
 
 
-    async def _download_one_poll(
+    async def download_one_poll(
             self,
             poll_id,
             export_path = None,
@@ -194,11 +194,11 @@ class Downloader:
             raise ValueError(f"Error in export check: {poll_id}")
 
 
-    def download_poll(self, poll_id: int, *args, **kwargs):
-        asyncio.run(self._download_one_poll(poll_id, *args, **kwargs))
+    # def download_poll(self, poll_id: int, *args, **kwargs):
+    #     asyncio.run(self._download_one_poll(poll_id, *args, **kwargs))
 
 
-    async def _download_polls(
+    async def download_polls(
             self,
             poll_ids: list[int],
             export_dir=None,
@@ -269,5 +269,5 @@ class Downloader:
             warnings.warn(f"No completes in poll(s) {', '.join(map(str, empty_polls))}", utils.EmptyPollWarning)
 
 
-    def download_polls(self, poll_ids: list[int], *args, **kwargs):
-        asyncio.run(self._download_polls(poll_ids, *args, **kwargs))
+    # def download_polls(self, poll_ids: list[int], *args, **kwargs):
+    #     asyncio.run(self._download_polls(poll_ids, *args, **kwargs))

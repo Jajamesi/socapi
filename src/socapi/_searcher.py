@@ -4,7 +4,7 @@ from . import constants as const
 
 
 class Searcher:
-    async def _search_by_name(
+    async def search_by_name(
             self,
             name: str,
             is_in_track=False,
@@ -24,7 +24,7 @@ class Searcher:
             }
 
             result = await self._request(
-                endpoint=const.SEARCH_LIST_URL,
+                endpoint=const.SEARCH_LIST_ENDPOINT,
                 request_name="Search by name",
                 headers=self.headers,
                 payload=search_payload,
@@ -49,11 +49,11 @@ class Searcher:
         return return_dict
 
 
-    def search_by_name(self, name: str, *args, **kwargs):
-        return asyncio.run(self._search_by_name(name, *args, **kwargs))
+    # def search_by_name(self, name: str, *args, **kwargs):
+    #     return asyncio.run(self._search_by_name(name, *args, **kwargs))
 
 
-    async def _search_by_number(
+    async def search_by_number(
             self,
             num: int,
             is_in_track=False,
@@ -73,7 +73,7 @@ class Searcher:
             }
 
             result = await self._request(
-                endpoint=const.SEARCH_LIST_URL,
+                endpoint=const.SEARCH_LIST_ENDPOINT,
                 request_name="Search by name",
                 headers=self.headers,
                 payload=search_payload,
@@ -98,7 +98,7 @@ class Searcher:
         return return_dict
 
 
-    def search_by_number(self, name: str, *args, **kwargs):
-        return asyncio.run(self._search_by_number(name, *args, **kwargs))
+    # def search_by_number(self, name: str, *args, **kwargs):
+    #     return asyncio.run(self._search_by_number(name, *args, **kwargs))
 
 

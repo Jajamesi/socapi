@@ -5,11 +5,11 @@ from . import constants as const
 from . import utils
 
 from ._downloader import Downloader
-from ._quota import Quota
+from ._statistic import Statistic
 from ._searcher import Searcher
-from ._profiler import Profile
 
-class SocAPIClient(Downloader, Quota, Searcher, Profile):
+
+class SocAPIClient(Downloader, Statistic, Searcher):
     def __init__(self, base_url, username, password):
         self.base_url = str(base_url)
 
@@ -74,7 +74,7 @@ class SocAPIClient(Downloader, Quota, Searcher, Profile):
             "password": self.password
         }
 
-        result = await self._request(endpoint=const.LOGIN_URL, request_name="Login", payload=login_payload)
+        result = await self._request(endpoint=const.LOGIN_ENDPOINT, request_name="Login", payload=login_payload)
 
         result_json = await result.json()
 
@@ -103,7 +103,7 @@ class SocAPIClient(Downloader, Quota, Searcher, Profile):
         }
 
         result = await self._request(
-            endpoint=const.STAT_URL,
+            endpoint=const.STATISTIC_ENDPOINT,
             payload=payload,
             request_name="stat any exist",
             headers=self.headers
