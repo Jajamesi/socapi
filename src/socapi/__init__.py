@@ -26,12 +26,12 @@ class SocAPIClient(Downloader, Statistic, Searcher):
         if self._session is None or self._session.closed:
             self._session = aiohttp.ClientSession()
 
-    async def _close(self):
+    async def close(self):
         if self._session is not None:
             await self._session.close()
 
-    def close(self):
-        asyncio.run(self._close())
+    # def close(self):
+    #     asyncio.run(self._close())
 
     async def _request(
             self,
@@ -93,7 +93,7 @@ class SocAPIClient(Downloader, Statistic, Searcher):
         }
 
 
-    async def _any_completes(self, poll_id:int) -> bool:
+    async def has_completes(self, poll_id:int) -> bool:
 
         payload = {
             "is_poll_complete": True,
@@ -117,5 +117,5 @@ class SocAPIClient(Downloader, Statistic, Searcher):
         return result_json["result"]["ended_count"] > 0
 
 
-    def has_completes(self, poll_id: int) -> bool:
-        return asyncio.run(self._any_completes(poll_id))
+    # def has_completes(self, poll_id: int) -> bool:
+    #     return asyncio.run(self._any_completes(poll_id))
