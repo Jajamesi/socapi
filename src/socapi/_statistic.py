@@ -165,15 +165,17 @@ class Statistic:
         poll_target_metadata = {
             "name": meta["name"],
             "status_id": meta["status_id"],
-            "quotas": {
-                quota["id"]: {
-                "quota_name": quota['name'],
-                "sources_names": ', '.join([sources_labels[source_id] for source_id in quota['source_ids']]),
-                "hits": quota["hits"],
-                "quota": quota["quota"],
-                "left": quota["quota"] - quota["hits"],
+            "quotas": [
+                {
+                    "quota_id": quota["id"],
+                    "quota_name": quota['name'],
+                    "sources_names": ', '.join([sources_labels[source_id] for source_id in quota['source_ids']]),
+                    "hits": quota["hits"],
+                    "quota": quota["quota"],
+                    "left": quota["quota"] - quota["hits"],
                 } for quota in quotas
-            },
+                    ]
+            ,
             "conversions": conversions
         }
 
