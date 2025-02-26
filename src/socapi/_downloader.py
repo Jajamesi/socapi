@@ -52,7 +52,7 @@ class Downloader:
             check_empty=True
     ):
         if check_empty:
-            if not await self._any_completes(poll_id):
+            if not await self.has_completes(poll_id):
                 raise utils.EmptyPollError(f"No completes in poll {poll_id} - export stopped")
 
         export_payload = {
@@ -146,8 +146,9 @@ class Downloader:
         export_interval = (utils.convert_to_iso8601(time_from), utils.convert_to_iso8601(time_to))
 
         if export_path is None:
-            export_format = const.EXPORT_FORMATS.get("sav", 2)
-            export_path = Path(f"poll_{poll_id}.{export_format}")
+            default_format = "sav"
+            export_format = const.EXPORT_FORMATS.get(default_format, 2)
+            export_path = Path(f"poll_{poll_id}.{default_format}")
         else:
             export_path = Path(export_path)
 
