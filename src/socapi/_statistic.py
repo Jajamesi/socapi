@@ -74,6 +74,11 @@ class Statistic:
         return result_json["result"]["sources"] if sources_only else result_json["result"]
 
 
+    async def get_metadata(self, poll_id: int):
+        await self._login()
+        return await self._get_metadata(poll_id)
+
+
     async def get_quota(self, poll_id: int):
         """
         Fetch quota information for a specific poll, including quota values and associated sources.
