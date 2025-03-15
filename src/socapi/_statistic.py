@@ -2,6 +2,7 @@
 import asyncio
 
 from . import constants as const
+from . import endpoints
 from . import utils
 
 
@@ -26,7 +27,7 @@ class Statistic:
         }
 
         result = await self._request(
-            endpoint=const.QUOTA_LIST_ENDPOINT,
+            endpoint=endpoints.QUOTA_LIST_ENDPOINT,
             payload=list_quota_payload,
             headers=self.headers,
             request_name="List quota"
@@ -59,7 +60,7 @@ class Statistic:
         }
 
         result = await self._request(
-            endpoint=const.POLL_GET_ENDPOINT,
+            endpoint=endpoints.POLL_GET_ENDPOINT,
             payload=sources_metadata_payload,
             headers=self.headers,
             request_name="Get metadata"
@@ -136,7 +137,7 @@ class Statistic:
         }
 
         result = await self._request(
-            endpoint=const.CONVERSION_ENDPOINT,
+            endpoint=endpoints.CONVERSION_ENDPOINT,
             payload=conversion_payload,
             headers=self.headers,
             request_name="Get conversions"

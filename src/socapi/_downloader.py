@@ -4,7 +4,9 @@ import warnings
 from pathlib import Path
 
 from . import constants as const
+from . import endpoints
 from . import utils
+
 
 
 class Downloader:
@@ -75,7 +77,7 @@ class Downloader:
                 export_payload["filter"][d] = export_interval[i]
 
         await self._request(
-            endpoint=const.EXPORT_START_ENDPOINT,
+            endpoint=endpoints.EXPORT_START_ENDPOINT,
             payload=export_payload,
             headers=self.headers,
             request_name="Export"
@@ -84,7 +86,7 @@ class Downloader:
 
     async def _check_export_progress(self):
 
-        result = await self._request(endpoint=const.EXPORT_PROGRESS_ENDPOINT, request_name="Progress", headers=self.headers)
+        result = await self._request(endpoint=endpoints.EXPORT_PROGRESS_ENDPOINT, request_name="Progress", headers=self.headers)
 
         try:
             result_json = await result.json()
@@ -107,7 +109,7 @@ class Downloader:
         download_payload = {"uuid": uuid}
 
         result = await self._request(
-            endpoint=const.DOWNLOAD_START_ENDPOINT,
+            endpoint=endpoints.DOWNLOAD_START_ENDPOINT,
             request_name="Download",
             headers=self.headers,
             payload=download_payload,
@@ -126,7 +128,7 @@ class Downloader:
         done_payload = {"uuid": uuid}
 
         await self._request(
-            endpoint=const.DOWNLOAD_DONE_ENDPOINT,
+            endpoint=endpoints.DOWNLOAD_DONE_ENDPOINT,
             request_name="Done",
             headers=self.headers,
             payload=done_payload,

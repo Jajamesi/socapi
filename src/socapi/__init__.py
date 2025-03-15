@@ -2,14 +2,16 @@ import asyncio
 import aiohttp
 
 from . import constants as const
+from . import endpoints
 from . import utils
 
 from ._downloader import Downloader
 from ._statistic import Statistic
 from ._searcher import Searcher
+from ._links import Links
 
 
-class SocAPIClient(Downloader, Statistic, Searcher):
+class SocAPIClient(Downloader, Statistic, Searcher, Links):
     def __init__(self, base_url, username, password):
         self.base_url = str(base_url)
 
@@ -74,7 +76,7 @@ class SocAPIClient(Downloader, Statistic, Searcher):
             "password": self.password
         }
 
-        result = await self._request(endpoint=const.LOGIN_ENDPOINT, request_name="Login", payload=login_payload)
+        result = await self._request(endpoint=endpoints.LOGIN_ENDPOINT, request_name="Login", payload=login_payload)
 
         result_json = await result.json()
 
@@ -103,7 +105,7 @@ class SocAPIClient(Downloader, Statistic, Searcher):
         }
 
         result = await self._request(
-            endpoint=const.STATISTIC_ENDPOINT,
+            endpoint=endpoints.STATISTIC_ENDPOINT,
             payload=payload,
             request_name="stat any exist",
             headers=self.headers

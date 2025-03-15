@@ -2,6 +2,7 @@
 import asyncio
 
 from . import constants as const
+from . import endpoints
 from . import utils
 
 

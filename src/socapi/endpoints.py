@@ -1,0 +1,12 @@
+
+LOGIN_ENDPOINT="api/login"
+EXPORT_START_ENDPOINT = "api/poll/stat/export"
+EXPORT_PROGRESS_ENDPOINT = f"api/poll/stat/export/progress"
+DOWNLOAD_START_ENDPOINT = f"api/poll/stat/export/progress/download"
+DOWNLOAD_DONE_ENDPOINT = f"api/poll/stat/export/progress/done"
+QUOTA_LIST_ENDPOINT = "api/counter/list"
+POLL_GET_ENDPOINT = "api/poll/get"
+SEARCH_LIST_ENDPOINT = "api/poll/list"
+STATISTIC_ENDPOINT = "api/poll/stat"
+CONVERSION_ENDPOINT = f"api/poll/stat/conversion"
+LINKS_ENDPOINT = f"api/poll/source/links"

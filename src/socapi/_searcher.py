@@ -1,6 +1,7 @@
 
 import asyncio
 from . import constants as const
+from . import endpoints
 
 
 class Searcher:
@@ -24,7 +25,7 @@ class Searcher:
             }
 
             result = await self._request(
-                endpoint=const.SEARCH_LIST_ENDPOINT,
+                endpoint=endpoints.SEARCH_LIST_ENDPOINT,
                 request_name="Search by name",
                 headers=self.headers,
                 payload=search_payload,
@@ -73,7 +74,7 @@ class Searcher:
             }
 
             result = await self._request(
-                endpoint=const.SEARCH_LIST_ENDPOINT,
+                endpoint=endpoints.SEARCH_LIST_ENDPOINT,
                 request_name="Search by name",
                 headers=self.headers,
                 payload=search_payload,
