@@ -187,3 +187,44 @@ class Statistic:
 
         return poll_target_metadata
 
+
+    async def get_by_poll(self, poll_id: int):
+        await self._login()
+
+
+        payload = {
+            "poll_id":poll_id,
+            "includes":[
+                "type_id",
+                "answers",
+                "id",
+                "title",
+                "block_id",
+                "order",
+                "optional",
+                "max_answer",
+                "min_answer",
+                "has_input",
+                "children",
+                "children.type_id",
+                "children.answers"]
+        }
+
+        print(payload)
+
+        result = await self._request(
+            endpoint=endpoints.GET_BY_POLL,
+            payload=payload,
+            headers=self.headers,
+            request_name="Get poll questions"
+        )
+
+        result_json = await result.json()
+
+        print(result_json)
+
+        if result_json.get("error") != "":
+            raise ValueError(f"Error in getting questions: {result_json.get('error')}")
+
+        return result_json["result"]
+
