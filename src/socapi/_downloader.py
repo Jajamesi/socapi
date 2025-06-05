@@ -234,7 +234,7 @@ class Downloader:
         for init_chunk in dwnld_chunks:
 
             # Filter out polls that has not any completes
-            has_any_completes = await asyncio.gather(*(self._any_completes(poll_id) for poll_id in init_chunk))
+            has_any_completes = await asyncio.gather(*(self.has_completes(poll_id) for poll_id in init_chunk))
             chunk = {poll_id for poll_id, has_any in zip(init_chunk, has_any_completes) if has_any}
             empty_polls.extend(poll_id for poll_id, has_any in zip(init_chunk, has_any_completes) if not has_any)
 
