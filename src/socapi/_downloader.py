@@ -1,3 +1,8 @@
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from __init__ import SocAPIClient
+
 
 import asyncio
 import warnings
@@ -6,7 +11,6 @@ from pathlib import Path
 from . import constants as const
 from . import endpoints
 from . import utils
-
 
 
 class Downloader:
@@ -45,7 +49,7 @@ class Downloader:
     """
 
     async def _export_poll_data(
-            self,
+            self: "SocAPIClient",
             poll_id: int,
             export_format = const.EXPORT_FORMATS.get("sav", 2),
             is_completes=True,
@@ -84,7 +88,7 @@ class Downloader:
         )
 
 
-    async def _check_export_progress(self):
+    async def _check_export_progress(self: "SocAPIClient"):
 
         result = await self._request(endpoint=endpoints.EXPORT_PROGRESS_ENDPOINT, request_name="Progress", headers=self.headers)
 
@@ -100,7 +104,7 @@ class Downloader:
 
 
     async def _download_poll(
-            self,
+            self: "SocAPIClient",
             uuid: str,
             export_path: Path
     ):
@@ -124,7 +128,7 @@ class Downloader:
             await self._done_export(uuid=uuid)
 
 
-    async def _done_export(self, uuid: str):
+    async def _done_export(self: "SocAPIClient", uuid: str):
         done_payload = {"uuid": uuid}
 
         await self._request(
@@ -136,7 +140,7 @@ class Downloader:
 
 
     async def download_one_poll(
-            self,
+            self: "SocAPIClient",
             poll_id,
             export_path = None,
             is_completes=True,
@@ -202,7 +206,7 @@ class Downloader:
 
 
     async def download_polls(
-            self,
+            self: "SocAPIClient",
             poll_ids: list[int],
             export_dir=None,
             export_format = "sav",

@@ -142,7 +142,7 @@ class Statistic:
         }
 
         result = await self._request(
-            endpoint=endpoints.CONVERSION_ENDPOINT,
+            endpoint=endpoints.CONVERSION,
             payload=conversion_payload,
             headers=self.headers,
             request_name="Get conversions"

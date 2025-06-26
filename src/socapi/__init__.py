@@ -32,9 +32,6 @@ class SocAPIClient(Downloader, Statistic, Searcher, Links):
         if self._session is not None:
             await self._session.close()
 
-    # def close(self):
-    #     asyncio.run(self._close())
-
     async def _request(
             self,
             endpoint,
@@ -119,5 +116,11 @@ class SocAPIClient(Downloader, Statistic, Searcher, Links):
         return result_json["result"]["ended_count"] > 0
 
 
-    # def has_completes(self, poll_id: int) -> bool:
-    #     return asyncio.run(self._any_completes(poll_id))
+    async def _parse_json_result(self, result, context: str) -> dict:
+        try:
+            result_json = await result.json()
+        except Exception as e:
+            raise ValueError(f"Failed to parse JSON in {context}: {e}")
+        if result_json.get("error"):
+            raise ValueError(f"Error in {context}: {result_json.get('error')}")
+        return result_json["result"]
