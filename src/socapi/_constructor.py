@@ -1,3 +1,7 @@
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from __init__ import SocAPIClient
 
 import asyncio
 

@@ -37,8 +37,8 @@ def validate_file_names_ids(poll_ids, filenames, export_format):
     Raises:
     ValueError: If any poll ID is not an integer, or if the filenames list length does not match poll IDs length.
     """
-    if not all([isinstance(x, int) for x in poll_ids]):
-        raise ValueError("All poll_ids must be integers")
+    # if not all([isinstance(x, int) for x in poll_ids]):
+    #     raise ValueError("All poll_ids must be integers")
 
     if filenames is None:
         filenames = [f"poll_{poll_id}.{export_format}" for poll_id in poll_ids]

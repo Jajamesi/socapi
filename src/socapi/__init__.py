@@ -101,19 +101,17 @@ class SocAPIClient(Downloader, Statistic, Searcher, Links):
             "id": poll_id
         }
 
+        req_name="stat any exist"
         result = await self._request(
             endpoint=endpoints.STATISTIC_ENDPOINT,
             payload=payload,
-            request_name="stat any exist",
+            request_name=req_name,
             headers=self.headers
         )
 
-        result_json = await result.json()
+        result_json = await self._parse_json_result(result, req_name)
 
-        if result_json.get("error")!= "":
-            raise ValueError(f"Error in getting poll statistic: {result_json.get('error')}")
-
-        return result_json["result"]["ended_count"] > 0
+        return result_json["ended_count"] > 0
 
 
     async def _parse_json_result(self, result, context: str) -> dict:
