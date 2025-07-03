@@ -1,3 +1,7 @@
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from __init__ import SocAPIClient
 
 import asyncio
 
@@ -5,10 +9,13 @@ from . import constants as const
 from . import endpoints
 from . import utils
 
+from .models import _statistics_models as sm
+from .models import _client_model as cm
+
 
 class Statistic:
 
-    async def _get_quota_values(self, poll_id: int):
+    async def _get_quota_values(self: "SocAPIClient", poll_id: int):
         """
         Fetch quota values for a specific poll.
 
@@ -26,21 +33,20 @@ class Statistic:
             "poll_id": poll_id,
         }
 
+        req_name = "List quota"
+
         result = await self._request(
-            endpoint=endpoints.QUOTA_LIST_ENDPOINT,
+            method=cm.ValidRequestsMethods.post,
+            endpoint=cm.Endpoints.QUOTA_LIST_ENDPOINT,
             payload=list_quota_payload,
             headers=self.headers,
-            request_name="List quota"
+            request_name=req_name
         )
 
-        result_json = await result.json()
+        result_json = await self._parse_json_result(result, context=req_name)
+        return result_json
 
-        if result_json.get("error") != "":
-            raise ValueError(f"Error in listing quota: {result_json.get("error")}")
-
-        return result_json["result"]
-
-    async def _get_metadata(self, poll_id: int, sources_only=False):
+    async def _get_metadata(self: "SocAPIClient", poll_id: int, sources_only=False):
         """
         Fetch metadata for sources associated with a specific poll.
 
@@ -59,27 +65,28 @@ class Statistic:
             "id": poll_id,
         }
 
+        req_name="Get metadata"
+
         result = await self._request(
-            endpoint=endpoints.POLL_GET_ENDPOINT,
+            method=cm.ValidRequestsMethods.post,
+            endpoint=cm.Endpoints.POLL_GET_ENDPOINT,
             payload=sources_metadata_payload,
             headers=self.headers,
-            request_name="Get metadata"
+            request_name=req_name
         )
 
-        result_json = await result.json()
-
-        if result_json.get("error") != "":
-            raise ValueError(f"Error in getting metadata: {result_json.get('error')}")
-
-        return result_json["result"]["sources"] if sources_only else result_json["result"]
+        result_json = await self._parse_json_result(result, context=req_name)
+        return result_json["sources"] if sources_only else result_json
 
 
-    async def get_metadata(self, poll_id: int):
-        await self._login()
+    @cm.validate_login
+    async def get_metadata(self: "SocAPIClient", poll_id: int):
+        # await self._login()
         return await self._get_metadata(poll_id)
 
 
-    async def get_quota(self, poll_id: int):
+    @cm.validate_login
+    async def get_quota(self: "SocAPIClient", poll_id: int):
         """
         Fetch quota information for a specific poll, including quota values and associated sources.
 
@@ -104,7 +111,7 @@ class Statistic:
         ValueError: If an error occurs while fetching quota values or source metadata.
         """
 
-        await self._login()
+        # await self._login()
 
         quotas, sources = await asyncio.gather(
             self._get_quota_values(poll_id),
@@ -129,9 +136,10 @@ class Statistic:
     #     return asyncio.run(self._get_quota(poll_id))
 
 
-    async def get_conversions(self, poll_id: int):
+    @cm.validate_login
+    async def get_conversions(self: "SocAPIClient", poll_id: int):
 
-        await self._login()
+        # await self._login()
 
         conversion_payload = {
             "id":poll_id,
@@ -141,24 +149,25 @@ class Statistic:
             "is_disqualified":True
         }
 
+        req_name="Get conversions"
+
         result = await self._request(
-            endpoint=endpoints.CONVERSION,
+            method=cm.ValidRequestsMethods.post,
+            endpoint=cm.Endpoints.CONVERSION,
             payload=conversion_payload,
             headers=self.headers,
-            request_name="Get conversions"
+            request_name=req_name
         )
 
-        result_json = await result.json()
+        result_json = await self._parse_json_result(result, context=req_name)
 
-        if result_json.get("error") != "":
-            raise ValueError(f"Error in getting conversions: {result_json.get('error')}")
-
-        return result_json["result"]
+        return result_json
 
 
-    async def get_poll_target_metadata(self, poll_id: int):
+    @cm.validate_login
+    async def get_poll_target_metadata(self: "SocAPIClient", poll_id: int):
 
-        await self._login()
+        # await self._login()
 
         quotas, meta, conversions = await asyncio.gather(
             self._get_quota_values(poll_id),
@@ -188,43 +197,38 @@ class Statistic:
         return poll_target_metadata
 
 
-    async def get_by_poll(self, poll_id: int):
-        await self._login()
-
-
-        payload = {
-            "poll_id":poll_id,
-            "includes":[
-                "type_id",
-                "answers",
-                "id",
-                "title",
-                "block_id",
-                "order",
-                "optional",
-                "max_answer",
-                "min_answer",
-                "has_input",
-                "children",
-                "children.type_id",
-                "children.answers"]
-        }
-
-        print(payload)
-
-        result = await self._request(
-            endpoint=endpoints.GET_BY_POLL,
-            payload=payload,
-            headers=self.headers,
-            request_name="Get poll questions"
-        )
-
-        result_json = await result.json()
-
-        print(result_json)
-
-        if result_json.get("error") != "":
-            raise ValueError(f"Error in getting questions: {result_json.get('error')}")
-
-        return result_json["result"]
+    # async def get_by_poll(self: "SocAPIClient", poll_id: int):
+    #     await self._login()
+    #
+    #
+    #     payload = {
+    #         "poll_id":poll_id,
+    #         "includes":[
+    #             "type_id",
+    #             "answers",
+    #             "id",
+    #             "title",
+    #             "block_id",
+    #             "order",
+    #             "optional",
+    #             "max_answer",
+    #             "min_answer",
+    #             "has_input",
+    #             "children",
+    #             "children.type_id",
+    #             "children.answers"]
+    #     }
+    #
+    #     req_name="Get poll questions"
+    #
+    #     result = await self._request(
+    #         endpoint=endpoints.QUESTIONS_ALL,
+    #         payload=payload,
+    #         headers=self.headers,
+    #         request_name=req_name
+    #     )
+    #
+    #     result_json = await self._parse_json_result(result, req_name)
+    #
+    #     return result_json
 
