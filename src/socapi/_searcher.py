@@ -7,10 +7,13 @@ import asyncio
 from . import constants as const
 from . import endpoints
 from .models import _searcher_models as sm
+from .models import _client_model as cm
 
 
 class Searcher:
 
+
+    @cm.validate_login
     async def search(
             self: "SocAPIClient",
             name: str = None,
@@ -19,7 +22,7 @@ class Searcher:
             chunk_size=50
                      ):
 
-        await self._login()
+        # await self._login()
 
         req_name = "Search by name"
         return_dict = dict()
@@ -28,14 +31,17 @@ class Searcher:
         while True:
             p = sm.SearchPayload(
                 name=name,
-                poll_id=poll_id,
+                num=poll_id,
                 is_in_track=is_in_track,
                 limit=chunk_size + 1,
                 offset=chunk_size * counter
             )
 
+            print(p.model_dump())
+
             result = await self._request(
-                endpoint=endpoints.SEARCH_LIST_ENDPOINT,
+                method=cm.ValidRequestsMethods.post,
+                endpoint=cm.Endpoints.SEARCH_LIST_ENDPOINT,
                 request_name=req_name,
                 headers=self.headers,
                 payload=p.model_dump(exclude_none=True),

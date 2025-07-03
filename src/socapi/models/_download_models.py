@@ -2,6 +2,7 @@ from typing import List, Literal, Union, get_args, Iterable, Dict, Optional, Any
 from pydantic import BaseModel, field_validator, Field, ConfigDict, model_validator, computed_field
 from datetime import datetime, timezone
 
+
 from .. import endpoints
 #
 # class SearchPayload(BaseModel):
@@ -28,11 +29,16 @@ class DownloadPayload(BaseModel):
     poll_id: Union[int, List[int]]
     export_dir: Optional[str]=None
     export_format: Optional[ExportFormat]="sav"
-    is_completes: bool=True
-    is_in_progress: bool=True
+    is_poll_complete: bool=True
+    is_poll_in_progress: bool=True
     time_from: Optional[str]=None
     time_to: Optional[str]=None
     filenames: Optional[List[str]]=None
+    domain_ids: Optional[List[int]] = [1]
+
+    @field_validator("export_format", mode="before")
+    def validate_export_format(cls, v):
+        return 'sav' if v is None else v
 
     @field_validator("poll_id", mode="before")
     def convert_to_list(cls, v):
@@ -46,6 +52,8 @@ class DownloadPayload(BaseModel):
 
     @field_validator("time_from", "time_to", mode="before")
     def parse_time(cls, v):
+        if v is None:
+            return None
         dt = datetime.strptime(v, "%Y-%m-%d_%H:%M:%S")
         dt = dt.replace(microsecond=0, tzinfo=timezone.utc)
         formatted = dt.isoformat().replace("+00:00", "Z")
@@ -61,15 +69,22 @@ class DownloadPayload(BaseModel):
     @computed_field
     @property
     def export_format_num(self) -> int:
-        return EXPORT_FORMATS.get(self.export_format)
+        return EXPORT_FORMATS.get(self.export_format, 1)
 
 
     @computed_field
     @property
-    def formatted_filenames(self) -> Dict[int: str]:
+    def formatted_filenames(self) -> Dict[int, str]:
         if self.filenames is None:
             return {id_: f"poll_{id_}.{self.export_format}" for id_ in self.poll_id}
         return {id_: f"{name}.{self.export_format}" for id_, name in zip(self.poll_id, self.filenames)}
+
+
+    @field_validator("domain_ids", mode="before")
+    def validate_domain_ids(cls, v):
+        if v is None:
+            return [1]
+        return v
 
 
 class FilterPayload(BaseModel):

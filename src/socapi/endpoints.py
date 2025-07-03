@@ -10,6 +10,7 @@ SEARCH_LIST_ENDPOINT = "api/poll/list"
 STATISTIC_ENDPOINT = "api/poll/stat"
 CONVERSION = f"api/poll/stat/conversion"
 LINKS_ENDPOINT = f"api/poll/source/links"
+
 QUESTIONS_ALL = "api/question/getbypoll"
 QUESTIONS_BLOCK = "api/question/getbyblock"
 BLOCKS = "api/block/getbypoll"

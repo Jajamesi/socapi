@@ -1,8 +1,10 @@
 
 from typing import List, Literal, Union, get_args, Iterable, Dict
-from pydantic import BaseModel, field_validator, Field, ConfigDict
+from pydantic import BaseModel, field_validator, Field, ConfigDict, computed_field
+from enum import Enum
 
 from .. import endpoints
+from . import _client_model as cm
 
 BlockIncludeField = Literal["id", "name", "title", "description", "poll_id", "order"]
 BLOCK_INCLUDES = list(get_args(BlockIncludeField))
@@ -20,12 +22,17 @@ class BlockPayload(BaseModel):
             raise ValueError("includes must be 'all' or a list of fields")
         return v
 
+class QuestionExportHow(str, Enum):
+    poll="poll"
+    block="block"
 
-QUESTION_EXPORT_HOW = Literal["block", "poll"]
-QUESTION_ENDPOINTS: Dict[QUESTION_EXPORT_HOW, str] = {
-    "block": endpoints.QUESTIONS_BLOCK,
-    "poll": endpoints.QUESTIONS_ALL,
+
+QuestionEndpoints = {
+    QuestionExportHow.poll: cm.Endpoints.QUESTIONS_ALL,
+    QuestionExportHow.block: cm.Endpoints.QUESTIONS_BLOCK,
 }
+
+
 QuestionIncludeField = Literal[
     "type_id",
     "answers",
@@ -45,8 +52,20 @@ QUESTION_INCLUDES = list(get_args(QuestionIncludeField))
 
 class QuestionsPayload(BaseModel):
     parent_id: int
-    how: QUESTION_EXPORT_HOW
+    how: str | QuestionExportHow
     includes: Union[Literal["all"], List[QuestionIncludeField]] = Field(default="all", validate_default=True)
+
+
+    @field_validator("how", mode="before")
+    @classmethod
+    def validate_how(cls, v: str) -> QuestionExportHow:
+        if isinstance(v, QuestionExportHow):
+            return v
+        try:
+            return QuestionExportHow(v)
+        except ValueError:
+            raise ValueError(f"Invalid how: {v!r}")
+
 
     @field_validator("includes", mode="before")
     @classmethod
@@ -56,6 +75,22 @@ class QuestionsPayload(BaseModel):
         if not isinstance(v, list):
             raise ValueError("includes must be 'all' or a list of fields")
         return v
+
+
+    @computed_field
+    @property
+    def poll_id(self) -> Union[int, None]:
+        if self.how == QuestionExportHow.poll:
+            return self.parent_id
+        return None
+
+
+    @computed_field
+    @property
+    def block_id(self) -> Union[int, None]:
+        if self.how == QuestionExportHow.block:
+            return self.parent_id
+        return None
 
 
 class IdOrderItem(BaseModel):

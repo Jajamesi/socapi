@@ -14,9 +14,9 @@ def validate_file_format(export_format_input):
         return export_format_input
 
 
-def split_into_chunks(iterbl, chunk_size):
-    for i in range(0, len(iterbl), chunk_size):
-        yield set(iterbl[i:i + chunk_size])
+def split_into_chunks(iterable, chunk_size):
+    for i in range(0, len(iterable), chunk_size):
+        yield set(iterable[i:i + chunk_size])
 
 
 def validate_file_names_ids(poll_ids, filenames, export_format):

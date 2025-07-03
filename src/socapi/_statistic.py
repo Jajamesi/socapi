@@ -10,6 +10,7 @@ from . import endpoints
 from . import utils
 
 from .models import _statistics_models as sm
+from .models import _client_model as cm
 
 
 class Statistic:
@@ -35,7 +36,8 @@ class Statistic:
         req_name = "List quota"
 
         result = await self._request(
-            endpoint=endpoints.QUOTA_LIST_ENDPOINT,
+            method=cm.ValidRequestsMethods.post,
+            endpoint=cm.Endpoints.QUOTA_LIST_ENDPOINT,
             payload=list_quota_payload,
             headers=self.headers,
             request_name=req_name
@@ -66,7 +68,8 @@ class Statistic:
         req_name="Get metadata"
 
         result = await self._request(
-            endpoint=endpoints.POLL_GET_ENDPOINT,
+            method=cm.ValidRequestsMethods.post,
+            endpoint=cm.Endpoints.POLL_GET_ENDPOINT,
             payload=sources_metadata_payload,
             headers=self.headers,
             request_name=req_name
@@ -76,12 +79,13 @@ class Statistic:
         return result_json["sources"] if sources_only else result_json
 
 
-
+    @cm.validate_login
     async def get_metadata(self: "SocAPIClient", poll_id: int):
-        await self._login()
+        # await self._login()
         return await self._get_metadata(poll_id)
 
 
+    @cm.validate_login
     async def get_quota(self: "SocAPIClient", poll_id: int):
         """
         Fetch quota information for a specific poll, including quota values and associated sources.
@@ -107,7 +111,7 @@ class Statistic:
         ValueError: If an error occurs while fetching quota values or source metadata.
         """
 
-        await self._login()
+        # await self._login()
 
         quotas, sources = await asyncio.gather(
             self._get_quota_values(poll_id),
@@ -132,9 +136,10 @@ class Statistic:
     #     return asyncio.run(self._get_quota(poll_id))
 
 
+    @cm.validate_login
     async def get_conversions(self: "SocAPIClient", poll_id: int):
 
-        await self._login()
+        # await self._login()
 
         conversion_payload = {
             "id":poll_id,
@@ -147,7 +152,8 @@ class Statistic:
         req_name="Get conversions"
 
         result = await self._request(
-            endpoint=endpoints.CONVERSION,
+            method=cm.ValidRequestsMethods.post,
+            endpoint=cm.Endpoints.CONVERSION,
             payload=conversion_payload,
             headers=self.headers,
             request_name=req_name
@@ -158,9 +164,10 @@ class Statistic:
         return result_json
 
 
+    @cm.validate_login
     async def get_poll_target_metadata(self: "SocAPIClient", poll_id: int):
 
-        await self._login()
+        # await self._login()
 
         quotas, meta, conversions = await asyncio.gather(
             self._get_quota_values(poll_id),

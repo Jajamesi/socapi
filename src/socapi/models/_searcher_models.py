@@ -5,7 +5,7 @@ from .. import endpoints
 
 class SearchPayload(BaseModel):
     name: Optional[str]
-    poll_id: Optional[int]
+    num: Optional[int]
     is_in_track: bool = False
     limit: Optional[int] = 51
     offset: Optional[int] = 0
@@ -13,7 +13,7 @@ class SearchPayload(BaseModel):
     @model_validator(mode='before')
     @classmethod
     def check_search_params(cls, data: Any) -> Any:
-        if data.get("name") is None and data.get("poll_id") is None:
+        if data.get("name") is None and data.get("num") is None:
             raise ValueError("name or poll_id are required")
         return data
 
