@@ -6,7 +6,6 @@ if TYPE_CHECKING:
 from typing import List, Literal, Union, get_args, Iterable, Dict, Optional, Any
 import asyncio
 import warnings
-from pathlib import Path
 
 from . import constants as const
 from . import endpoints
