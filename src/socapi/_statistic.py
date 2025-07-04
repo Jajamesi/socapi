@@ -86,6 +86,12 @@ class Statistic:
 
 
     @cm.validate_login
+    async def get_full_metadata(self: "SocAPIClient", poll_id: int):
+        # await self._login()
+        return await self._get_metadata(poll_id, sources_only=False)
+
+
+    @cm.validate_login
     async def get_quota(self: "SocAPIClient", poll_id: int):
         """
         Fetch quota information for a specific poll, including quota values and associated sources.
