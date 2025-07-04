@@ -1,13 +1,27 @@
+from typing import TYPE_CHECKING, Optional
+
+if TYPE_CHECKING:
+    from __init__ import SocAPIClient
+
+from pydantic import BaseModel, validate_call
 
 from . import endpoints
+from .models import _client_model as cm
+
+# class LinksPayload(BaseModel):
+#     poll_id: int
+#     link_count: Optional[int] = 1
+
 
 class Links:
 
-    async def create_link(self,
+    @cm.validate_login
+    @validate_call
+    async def create_link(
+            self: "SocAPIClient",
             poll_id: int,
-            link_count: int = 1,
+            link_count: Optional[int] = 1,
     ):
-        await self._login()
 
         links_payload = {
             "poll_id": poll_id,
@@ -15,7 +29,7 @@ class Links:
         }
 
         result = await self._request(
-            endpoint=endpoints.LINKS_ENDPOINT,
+            endpoint=cm.Endpoints.LINKS_ENDPOINT,
             request_name="Generating links",
             headers=self.headers,
             payload=links_payload,
