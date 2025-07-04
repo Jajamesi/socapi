@@ -72,13 +72,16 @@ class MetaParser:
     @validate_call
     async def find_last_item(
         items: List[mpm.IdOrderItem],
-        question_types: Optional[Set[int]] = None
+        question_types: Optional[Iterable[str]] = None
     ) -> mpm.IdOrderItem:
         max_i = mpm.IdOrderItem(id=-1, order=-1, title="")
 
+        question_types_ids = mpm.QuestionTypes.get_ids_by_name(question_types) \
+            if question_types is not None else None
+
         for item in items:
             if item.order > max_i.order:
-                if question_types is None or item.type_id in question_types:
+                if question_types is None or item.type_id in question_types_ids:
                     max_i = item
 
         return max_i

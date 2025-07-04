@@ -121,10 +121,10 @@ class QuestionTypes(Enum):
         self.display_name = name
 
     @classmethod
-    def get_ids_by_name(cls, names: Union[str, List[str]]) -> set[int]:
+    def get_ids_by_name(cls, names: Union[str, Iterable[str], None]) -> set[int]:
         if isinstance(names, str):
             names = [names]
         lookup = set(names)
-        return set([member.type_id for member in cls if member.name in lookup])
+        return set([member.type_id for member in cls if member.name in lookup]) if names else None
 
 
