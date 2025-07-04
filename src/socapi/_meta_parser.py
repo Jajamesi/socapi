@@ -4,7 +4,7 @@ if TYPE_CHECKING:
     from __init__ import SocAPIClient
 
 import asyncio
-from typing import List, Literal, Union, get_args, Iterable, Dict
+from typing import List, Literal, Union, get_args, Iterable, Dict, Optional, Set
 
 from . import constants as const
 from . import endpoints
@@ -12,6 +12,7 @@ from . import utils
 from .models import _meta_parser_models as mpm
 from .models import _client_model as cm
 
+from pydantic import validate_call
 
 class MetaParser:
 
@@ -33,7 +34,7 @@ class MetaParser:
             request_name="Get blocks"
         )
 
-        print(result)
+        # print(result)
         result_json = await self._parse_json_result(result, "Get blocks")
 
         return result_json
@@ -68,9 +69,16 @@ class MetaParser:
 
 
     @staticmethod
-    async def find_last_item(items: mpm.IdOrderItems):
+    @validate_call
+    async def find_last_item(
+        items: List[mpm.IdOrderItem],
+        question_types: Optional[Set[int]] = None
+    ) -> mpm.IdOrderItem:
         max_i = mpm.IdOrderItem(id=-1, order=-1, title="")
-        for i in items.items:
-            if i.order > max_i.order:
-                max_i = i
+
+        for item in items:
+            if item.order > max_i.order:
+                if question_types is None or item.type_id in question_types:
+                    max_i = item
+
         return max_i

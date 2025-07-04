@@ -2,6 +2,7 @@
 from typing import List, Literal, Union, get_args, Iterable, Dict
 from pydantic import BaseModel, field_validator, Field, ConfigDict, computed_field
 from enum import Enum
+from dataclasses import dataclass
 
 from .. import endpoints
 from . import _client_model as cm
@@ -102,3 +103,28 @@ class IdOrderItem(BaseModel):
 
 class IdOrderItems(BaseModel):
     items: List[IdOrderItem]
+
+
+class QuestionTypes(Enum):
+    singlepunch = (1, "singlepunch")
+    droplist = (2, "droplist")
+    one_in_row = (3, "one_in_row")
+    multipunch = (4, "multipunch")
+    oe = (7, "oe")
+    ordered = (8, "ordered")
+    slider = (9, "slider")
+    mult_in_row = (10, "mult_in_row")
+    info_screen = (11, "info_screen")
+
+    def __init__(self, type_id: int, name: str):
+        self.type_id = type_id
+        self.display_name = name
+
+    @classmethod
+    def get_ids_by_name(cls, names: Union[str, List[str]]) -> set[int]:
+        if isinstance(names, str):
+            names = [names]
+        lookup = set(names)
+        return set([member.type_id for member in cls if member.name in lookup])
+
+

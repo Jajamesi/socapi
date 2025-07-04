@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING
 
+from typing_extensions import Literal
+
 if TYPE_CHECKING:
     from __init__ import SocAPIClient
 
@@ -12,19 +14,19 @@ from .models import _client_model as cm
 
 class Searcher:
 
-
     @cm.validate_login
     async def search(
             self: "SocAPIClient",
             name: str = None,
             poll_id: int = None,
+            status: Literal["active", "deleted", "published", "closed"] = None,
             is_in_track=False,
             chunk_size=50
                      ):
 
         # await self._login()
 
-        req_name = "Search by name"
+        req_name = "Search"
         return_dict = dict()
         counter = 0
 
@@ -32,12 +34,13 @@ class Searcher:
             p = sm.SearchPayload(
                 name=name,
                 num=poll_id,
+                status_id=status,
                 is_in_track=is_in_track,
                 limit=chunk_size + 1,
                 offset=chunk_size * counter
             )
 
-            print(p.model_dump())
+            # print(p.model_dump())
 
             result = await self._request(
                 method=cm.ValidRequestsMethods.post,
@@ -50,6 +53,7 @@ class Searcher:
             result_json = await self._parse_json_result(result, context=req_name)
 
             chunk = {poll["id"]: {par: poll[par] for par in const.SEARCH_RETURNS} for poll in result_json}
+            # print(chunk.keys())
             return_dict.update(chunk)
 
             if len(chunk) < chunk_size:
@@ -57,7 +61,7 @@ class Searcher:
 
             counter+=1
 
-        return result_json
+        return return_dict
 
 
 
