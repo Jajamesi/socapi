@@ -16,7 +16,7 @@ from .models import _client_model as cm
 class Links:
 
     @cm.validate_login
-    # @validate_call
+    @validate_call
     async def create_link(
             self: "SocAPIClient",
             poll_id: int,
