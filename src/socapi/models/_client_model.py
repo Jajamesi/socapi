@@ -20,8 +20,8 @@ class PlatformsFull(str, Enum):
 
 class ClientModel(BaseModel):
     platform: Union[PlatformsShort | str]
-    login: str
-    password: str
+    login: str | None
+    password: str | None
 
     _session: Optional[aiohttp.ClientSession | None] = None
     token: Optional[str] = None
@@ -34,6 +34,17 @@ class ClientModel(BaseModel):
     @classmethod
     def from_raw(cls, platform: str, login: str, password: str) -> "ClientModel":
         return cls(platform=PlatformsShort(platform), login=login, password=password)
+
+
+    @classmethod
+    def from_token(cls, platform: str, token: str) -> "ClientModel":
+        return cls(
+            platform=PlatformsShort(platform),
+            login=None,
+            password=None,
+            token=token,
+            headers={"Authorization": token}
+        )
 
 
     @field_validator("platform", mode="before")
@@ -51,6 +62,12 @@ class ClientModel(BaseModel):
     @property
     def base_url(self) -> PlatformsFull:
         return PlatformsFull[self.platform.name].value
+
+
+    @computed_field
+    @property
+    def is_from_token(self) -> bool:
+        return self.token is not None
 
 
 class ValidRequestsMethods(str, Enum):
@@ -73,6 +90,7 @@ class Endpoints(str, Enum):
     QUESTIONS_ALL = "api/question/getbypoll"
     QUESTIONS_BLOCK = "api/question/getbyblock"
     BLOCKS = "api/block/getbypoll"
+    PROFILE = "api/profile"
 
 
 class LoginPayload(BaseModel):

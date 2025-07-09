@@ -104,6 +104,10 @@ class SocAPIClient(cm.ClientModel, Downloader, Statistic, Searcher, Links, MetaP
             SomeException: If the request or response parsing fails. (Replace with actual exceptions.)
         """
 
+        # if session is created from existing token, no need to login
+        if self.is_from_token:
+            return None
+
         req_name = "Login"
 
         login_payload = cm.LoginPayload(login=self.login, password=self.password)
@@ -125,6 +129,22 @@ class SocAPIClient(cm.ClientModel, Downloader, Statistic, Searcher, Links, MetaP
         self.headers = {
             "Authorization": self.token
         }
+
+
+    async def profile_user(self) -> None:
+        req_name = "Profile"
+        result = await self._request(
+            method=cm.ValidRequestsMethods.post,
+            endpoint=cm.Endpoints.PROFILE,
+            request_name=req_name,
+            headers=self.headers
+        )
+        result_json = await self._parse_json_result(result, req_name)
+
+        if result_json.get("login") is not None:
+            self.login = result_json.get("login")
+            return
+
 
     # @staticmethod
     # def validate_login(func):
