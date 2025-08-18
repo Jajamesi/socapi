@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "socapi"
+version = "0.0.1"
+authors = [
+  { name="Jajamesi", email="contact_via_git_hub@pupa.com" },
+]
+description = "Util package for working with socpanel API"
+readme = "README.md"
+requires-python = ">=3.12"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "aiohttp>=3.12.13",
+    "pydantic>=2.8.2",
+    "beautifulsoup4>=4.13.4",
+]
+
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[project.urls]
+Homepage = "https://github.com/Jajamesi/socapi"
+Issues = "https://github.com/Jajamesi/socapi/issues"
