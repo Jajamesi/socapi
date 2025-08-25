@@ -42,23 +42,23 @@ def validate_file_names_ids(
     return filenames
 
 
-def format_poll_id(poll_ids: Union[int, Set[int], List[int]]) -> Set[int]:
-    return set(poll_ids) if isinstance(poll_ids, Iterable) else {poll_ids}
+def format_poll_id(poll_ids: Union[int, Set[int], List[int]]) -> List[int]:
+    return list(poll_ids) if isinstance(poll_ids, Iterable) else [poll_ids]
 
 
 def format_filenames(
         filenames: Optional[Sequence[str]],
-        poll_ids: Set[int],
+        poll_ids: List[int],
         export_format: dm.ExportFileFormat
-    ) -> Set[str]:
+    ) -> List[str]:
     if filenames is not None:
         if len(filenames) != len(poll_ids): raise ValueError("Filenames Poll IDs must have same length")
-        return set(filenames)
+        return list(filenames)
     return generate_filenames(poll_ids, export_format)
 
 
-def generate_filenames(poll_ids: Set[int], extension: dm.ExportFileFormat) -> Set[str]:
-    return {f"poll_{poll_id}.{extension.name}" for poll_id in poll_ids}
+def generate_filenames(poll_ids: List[int], extension: dm.ExportFileFormat) -> List[str]:
+    return [f"poll_{poll_id}.{extension.name}" for poll_id in poll_ids]
 
 
 def validate_path(p: Optional[str]) -> Path:
