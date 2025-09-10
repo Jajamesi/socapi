@@ -105,7 +105,8 @@ class ClientModel(BaseModel):
     login: str | None
     password: str | None
     init_source: InitSource
-    
+
+    user_id: int | None = None
     meta: list[int] | None  = None
     token: Optional[str] = None
     headers: Optional[dict[str, str]] = None
@@ -291,5 +292,6 @@ class ClientModel(BaseModel):
             extract_result=True
         )
 
+        self.user_id = r.get("id")
         self.login = r.get("login")
         self.meta = r.get("meta")
