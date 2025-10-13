@@ -10,6 +10,7 @@ from ._statistic import Statistic
 from ._searcher import Searcher
 from ._links import Links
 from ._meta_parser import MetaParser
+from ._constructor import Constructor
 
 from .models import _client_model as cm
 from . import expeptions
@@ -18,7 +19,7 @@ import sys
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-class SocAPIClient(cm.ClientModel, Downloader, Statistic, Searcher, Links, MetaParser):
+class SocAPIClient(cm.ClientModel, Downloader, Statistic, Searcher, Links, MetaParser, Constructor):
 
     @validate_call
     @cm.validate_login

@@ -64,6 +64,8 @@ class Endpoints(str, Enum):
     QUESTIONS_BY_BLOCK = "api/question/getbyblock"
     BLOCKS_IN_POLL = "api/block/getbypoll"
     USER_PROFILE = "api/profile"
+    DUPLICATE_POLL = "api/poll/duplicate"
+    UPDATE_META = "api/poll/update/meta"
 
 class RequestNames(str, Enum):
     GENERIC = "Request"
@@ -83,6 +85,8 @@ class RequestNames(str, Enum):
     EXPORT_DONE = "Done"
     STATISTIC = "Statistics"
     PERSONAL_LINKS = "Links"
+    DUPLICATE_POLL = "Duplicate poll"
+    UPDATE_META = "Update metadata"
 
 
 class InitSource(Enum):
