@@ -98,7 +98,7 @@ class Counter(BaseModel):
     sources: Optional[List[Source]] = Field(default_factory=list)
 
 class Answer(BaseModel):
-    id: int
+    id: Optional[int]=None
     order: int
     title: str
     has_input: bool
@@ -111,13 +111,13 @@ class Answer(BaseModel):
 
 
 class Question(BaseModel):
-    created_at: datetime
+    created_at: Optional[datetime] = None
     title: str
     answer_type: str = ""
     condition_type: str = ""
-    id: int
-    parent_id: int
-    updated_at: Optional[datetime]
+    id: Optional[int] = None
+    parent_id: Optional[int] = 0
+    updated_at: Optional[datetime] = None
     measure: Measures
     type_id: AnswerTypes
     max_answer: int
@@ -127,14 +127,14 @@ class Question(BaseModel):
     block_id: int
     optional: bool
     has_input: bool
-    input_validation: str = ""
+    input_validation: Optional[str] = ""
     randomized: bool
     transpose: bool
     display_labels: bool
     children_randomized: bool
     is_panel: bool
-    answers: List[Answer]
-    children: List[Question]
+    answers: Optional[List[Answer]] = None
+    children: Optional[List[Question]] = None
 
 
 

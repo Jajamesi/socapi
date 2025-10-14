@@ -9,6 +9,7 @@ import asyncio
 
 from .models import _meta_parser_models as mpm
 from .models import _client_model as cm
+from .models import _general_models as gm
 
 class MetaParser:
 
@@ -38,11 +39,12 @@ class MetaParser:
         parent_id: int,
         how: Literal["poll", "block"] | mpm.QuestionExportHow,
         includes: Union[Literal["all"], List[mpm.QuestionIncludeField]] = "all",
-    ):
+    ) -> List[gm.Question]:
+
         p = mpm.QuestionsPayload(parent_id=parent_id, how=how, includes=includes)
         endpoint = mpm.QuestionEndpoints.get(p.how).value
 
-        r = await self._request(
+        res = await self._request(
             method=HTTPMethod.POST,
             endpoint=endpoint,
             payload=p.model_dump(exclude={"how"}, exclude_none=True),
@@ -51,7 +53,7 @@ class MetaParser:
             extract_result = True,
         )
 
-        return r
+        return [gm.Question(**r) for r in res]
 
 
     @cm.validate_login
