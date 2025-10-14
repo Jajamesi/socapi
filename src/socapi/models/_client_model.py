@@ -64,6 +64,10 @@ class Endpoints(str, Enum):
     QUESTIONS_BY_BLOCK = "api/question/getbyblock"
     BLOCKS_IN_POLL = "api/block/getbypoll"
     USER_PROFILE = "api/profile"
+    DUPLICATE_POLL = "api/poll/duplicate"
+    UPDATE_META = "api/poll/update/meta"
+    COLLECTORS_LIST = "api/poll/source/list"
+    COLLECTOR_CREATE = "api/source/create"
 
 class RequestNames(str, Enum):
     GENERIC = "Request"
@@ -83,6 +87,10 @@ class RequestNames(str, Enum):
     EXPORT_DONE = "Done"
     STATISTIC = "Statistics"
     PERSONAL_LINKS = "Links"
+    DUPLICATE_POLL = "Duplicate poll"
+    UPDATE_META = "Update metadata"
+    COLLECTORS_LIST = "Get collectors"
+    COLLECTOR_CREATE = "Create collector"
 
 
 class InitSource(Enum):
@@ -246,7 +254,7 @@ class ClientModel(BaseModel):
                     case HTTPStatus.INTERNAL_SERVER_ERROR:
                         raise expeptions.PlatformError(request_name)
                     case _:
-                        raise ValueError("UNCACHED STATUS", response.status)
+                        raise ValueError("UNCACHED STATUS", response.status, response.content)
 
         return await self._make_request_with_retries(request_func, request_name, attempts, sleep)
 
