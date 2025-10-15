@@ -71,6 +71,7 @@ class Endpoints(str, Enum):
     QUESTION_CREATE = "api/question/create"
     QUESTION_UPDATE = "api/question/update"
     ANSWER_CREATE = "api/question/answer/create"
+    ADD_DISPLAY_LOGIC = "api/logic/display/addpack"
 
 class RequestNames(str, Enum):
     GENERIC = "Request"
@@ -97,6 +98,7 @@ class RequestNames(str, Enum):
     QUESTION_CREATE = "Create question"
     QUESTION_UPDATE = "Update question"
     ANSWER_CREATE = "Create answer"
+    ADD_DISPLAY_LOGIC = "Create display logic question"
 
 
 class InitSource(Enum):
@@ -220,7 +222,7 @@ class ClientModel(BaseModel):
             method: HTTPMethod,
             host: Literal["admin_url", "base_url"] = "admin_url",
             headers: Optional[dict[str, str]] = None,
-            payload: Optional[dict] = None,
+            payload: Optional[Union[dict, list[dict]]] = None,
             ssl: Optional[bool] = False,
             request_name: RequestNames = RequestNames.GENERIC,
             attempts: Optional[int] = RETRIES_NUM,

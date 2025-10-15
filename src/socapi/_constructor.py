@@ -10,7 +10,7 @@ from . import utils
 from .models import _client_model as cm
 from .models import _general_models as gm
 
-from pydantic import validate_call
+from pydantic import validate_call, Field
 from http import HTTPMethod
 
 class Constructor:
@@ -252,3 +252,55 @@ class Constructor:
         )
 
         return gm.Answer(**result)
+
+
+    @cm.validate_login
+    @validate_call
+    async def create_display_question_logic(
+            self,
+
+            comparator_id: int,
+            internal_condition: gm.LogicJoinCondition,
+            join_condition_id: int,
+            poll_id: int,
+            question_id: int,
+            reference_question_id: int,
+            reference_answer_id=None,
+            reference_answer_value=None
+
+    ) -> gm.QuestionDisplayLogic:
+        if reference_answer_id is None:
+            reference_answer_id = Field(default_factory=list)
+        if reference_answer_value is None:
+            reference_answer_value = Field(default_factory=list)
+        if TYPE_CHECKING:
+            self: SocAPIClient
+
+        logic = gm.QuestionDisplayLogic(
+            poll_id=poll_id,
+            reference_question_id=reference_question_id,
+            comparator_id=comparator_id,
+            join_condition_id=join_condition_id,
+            internal_condition=internal_condition,
+            reference_answer_id=reference_answer_id,
+            reference_answer_value=None,
+            question_id=question_id,
+        )
+
+        p = logic.model_dump(mode="json", exclude={"id"}, exclude_none=True)
+        p["reference_answer_value"]=None
+
+        p = [p]
+
+        print(p)
+
+        result = await self._request(
+            method=HTTPMethod.POST,
+            endpoint=cm.Endpoints.ADD_DISPLAY_LOGIC,
+            payload=p,
+            headers=self.headers,
+            request_name=cm.RequestNames.ADD_DISPLAY_LOGIC,
+            extract_result=True,
+        )
+
+        return gm.QuestionDisplayLogic(**result[0])

@@ -152,18 +152,18 @@ class DisplayLogic(BaseModel):
     """
     Logic unit how to display things
     """
-    id: int
+    id: Optional[int] = None
     poll_id: int
     reference_question_id: int
     comparator_id: int
     join_condition_id: int
-    disabled: bool
+    disabled: Optional[bool] = None
     internal_condition: LogicJoinCondition
-    created_at: datetime
-    updated_at: Optional[datetime]
-    deleted_at: Optional[datetime]
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    deleted_at: Optional[datetime] = None
     reference_answer_id: List[int] = Field(default_factory=list)
-    reference_answer_value: List[int] = Field(default_factory=list)
+    reference_answer_value: Optional[List[int]] = None
     
     
 class AnswerDisplayLogic(DisplayLogic):
@@ -178,7 +178,7 @@ class QuestionDisplayLogic(DisplayLogic):
     """
     Logic unit how to display questions
     """
-    block_id: Optional[int]
+    block_id: Optional[int]=None
     question_id: int
 
 
