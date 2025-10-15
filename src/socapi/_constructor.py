@@ -292,8 +292,6 @@ class Constructor:
 
         p = [p]
 
-        print(p)
-
         result = await self._request(
             method=HTTPMethod.POST,
             endpoint=cm.Endpoints.ADD_DISPLAY_LOGIC,
