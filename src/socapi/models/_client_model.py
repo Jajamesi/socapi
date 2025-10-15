@@ -68,6 +68,9 @@ class Endpoints(str, Enum):
     UPDATE_META = "api/poll/update/meta"
     COLLECTORS_LIST = "api/poll/source/list"
     COLLECTOR_CREATE = "api/source/create"
+    QUESTION_CREATE = "api/question/create"
+    QUESTION_UPDATE = "api/question/update"
+    ANSWER_CREATE = "api/question/answer/create"
 
 class RequestNames(str, Enum):
     GENERIC = "Request"
@@ -91,6 +94,9 @@ class RequestNames(str, Enum):
     UPDATE_META = "Update metadata"
     COLLECTORS_LIST = "Get collectors"
     COLLECTOR_CREATE = "Create collector"
+    QUESTION_CREATE = "Create question"
+    QUESTION_UPDATE = "Update question"
+    ANSWER_CREATE = "Create answer"
 
 
 class InitSource(Enum):
