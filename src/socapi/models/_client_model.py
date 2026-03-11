@@ -36,7 +36,7 @@ class FileInput(BaseModel):
 class PlatformsShort(str, Enum):
     online_sociology="online-sociology"
     world_survey = "world-survey"
-    sociology_form-form = "sociology-form
+    sociology_form-form = "sociology-form"
 
 class PlatformsAdmin(str, Enum):
     online_sociology = f"https://admin.online-sociology.ru"
