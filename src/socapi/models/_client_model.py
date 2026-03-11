@@ -36,15 +36,18 @@ class FileInput(BaseModel):
 class PlatformsShort(str, Enum):
     online_sociology="online-sociology"
     world_survey = "world-survey"
+    sociology_form-form = "sociology-form
 
 class PlatformsAdmin(str, Enum):
     online_sociology = f"https://admin.online-sociology.ru"
     world_survey = f"https://admin.world-survey.com"
+    sociology_form = f"https://admin.sociology-form.com"
 
 
 class PlatformsRoot(str, Enum):
     online_sociology = "https://online-sociology.ru"
     world_survey = "https://world-survey.com"
+    sociology_form = f"https://sociology-form.com"
 
 
 class Endpoints(str, Enum):
